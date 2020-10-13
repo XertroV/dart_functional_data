@@ -1,3 +1,7 @@
+## 0.3.1
+
+- Add Lenses for Map and BuiltMap
+
 ## 0.3.0
 
 - Use Optional form plain_optional

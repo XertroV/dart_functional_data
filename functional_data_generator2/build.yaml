@@ -7,7 +7,7 @@ targets:
 builders:
   functional_data:
     target: ":functional_data_generator2"
-    import: "package:functional_data_generator2/builder.dart"
+    import: "package:functional_data_generator2/functional_data_generator2.dart"
     builder_factories: ["functionalData"]
     build_extensions: {".dart": [".functional_data.g.part"]}
     auto_apply: dependents

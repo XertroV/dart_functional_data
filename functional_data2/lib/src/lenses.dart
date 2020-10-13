@@ -1,3 +1,4 @@
+import 'package:built_collection/built_collection.dart';
 import 'package:meta/meta.dart';
 import 'package:plain_optional/plain_optional.dart';
 
@@ -125,8 +126,77 @@ class List$ {
           final index = s.indexWhere(predicate);
           if (index < 0) return s;
           final newS = List<T>.from(s);
-          newS.replaceRange(index, index + 1, [t.raw]);
+          newS.replaceRange(index, index + 1, [t.unsafe]);
           return newS;
+        },
+      );
+}
+
+class Map$ {
+  Map$._();
+
+  static Lens<Map<S, T>, Optional<T>> atKey<S, T>(S i) =>
+      Lens<Map<S, T>, Optional<T>>(
+        (s) => s.containsKey(i) ? Optional(s[i]) : Optional.none(),
+        (s, t) => t
+            .map((tVal) => Map.from(s)..addEntries([MapEntry(i, tVal)]))
+            .valueOr(() => s),
+      );
+
+  static Lens<Map<S, T>, MapEntry<S, T>> where<S, T>(
+          bool Function(MapEntry<S, T>) predicate) =>
+      Lens<Map<S, T>, MapEntry<S, T>>(
+        (s) => s.entries.firstWhere(predicate),
+        (s, t) {
+          var entriesList = s.entries.toList();
+          final index = entriesList.indexWhere(predicate);
+          final newS = List<MapEntry<S, T>>.from(entriesList);
+          if (predicate(entriesList[index]))
+            newS.replaceRange(index, index + 1, []);
+          return Map.fromEntries(newS);
+        },
+      );
+
+  static Lens<Map<S, T>, Optional<MapEntry<S, T>>> whereOptional<S, T>(
+          bool Function(MapEntry<S, T>) predicate) =>
+      Lens<Map<S, T>, Optional<MapEntry<S, T>>>(
+        (s) => Optional((s.entries).firstWhere(predicate, orElse: () => null)),
+        (s, t) {
+          if (!t.hasValue) return s;
+          final index = s.entries.toList().indexWhere(predicate);
+          if (index < 0) return s;
+          final newS = Map<S, T>.from(s);
+          newS.entries.toList().replaceRange(index, index + 1, [t.unsafe]);
+          return newS;
+        },
+      );
+}
+
+class BuiltMap$ {
+  BuiltMap$._();
+
+  static Lens<BuiltMap<S, T>, Optional<T>> atKey<S, T>(S i) =>
+      Lens<BuiltMap<S, T>, Optional<T>>(
+        (s) => s.containsKey(i) ? Optional(s[i]) : Optional.none(),
+        (s, t) {
+          return t
+              .map((tVal) =>
+                  (s.toBuilder()..addEntries([MapEntry(i, tVal)])).build())
+              .valueOr(() => s);
+        },
+      );
+
+  static Lens<BuiltMap<S, T>, MapEntry<S, T>> where<S, T>(
+          bool Function(MapEntry<S, T>) predicate) =>
+      Lens<BuiltMap<S, T>, MapEntry<S, T>>(
+        (s) => s.entries.firstWhere(predicate),
+        (s, t) {
+          var entriesList = s.entries.toList();
+          final index = entriesList.indexWhere(predicate);
+          final newS = List<MapEntry<S, T>>.from(entriesList);
+          if (predicate(entriesList[index]))
+            newS.replaceRange(index, index + 1, []);
+          return BuiltMap.from(Map.fromEntries(newS));
         },
       );
 }

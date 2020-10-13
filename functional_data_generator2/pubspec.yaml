@@ -11,11 +11,13 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
-  analyzer: ">=0.40.0"
+  analyzer: ">=0.40.0 <9.9.9"
   build: ^1.3.0
   source_gen: ^0.9.6
   collection: ^1.14.12
-  functional_data: ">=0.2.0 <0.4.0"
+  functional_data2: ">=0.2.0 <0.4.0"
+  # functional_data2:
+  #   path: ../functional_data2
 
 dev_dependencies:
   build_runner: ^1.10.0

@@ -1,6 +1,6 @@
-# functional_data
+# functional_data2
 
-Simple and non-intrusive code generator for boilerplate of data types. The package generates a simple mixin with 
+Simple and non-intrusive code generator for boilerplate of data types. The package generates a simple mixin with
 `operator==`, `hashCode`, `copyWith`, `toString`, as well as lenses.
 
 ## Boiler plate
@@ -13,11 +13,11 @@ only have to provide a constructor with named arguments for all fields and exten
 class Person extends $Person {
   final String name;
   final int age;
-  
+
   const Person({this.name, this.age});
-  
+
   const Person.anonymous() : this(name: "John Doe", age: null);
-  
+
   int get ageInDays => 356 * age;
 }
 ```
@@ -31,11 +31,11 @@ To use functional_data, add the following dependencies to your package:
 
 ```yaml
 dependencies:
-  functional_data:
+  functional_data2:
 
 dev_dependencies:
   build_runner:
-  functional_data_generator:
+  functional_data_generator2:
 ```
 
 And run `flutter packages pub run build_runner build lib` to generate code.
@@ -67,7 +67,7 @@ using `then`.
 class Course extends $Course {
   final String name;
   final List<Person> students;
-  
+
   const Course({this.students});
 }
 
@@ -96,7 +96,7 @@ This is much less readable and error prone. Imagine what happens when one of the
 // lens.dart
 import 'package:collection/collection.dart';
 
-import 'package:functional_data/functional_data.dart';
+import 'package:functional_data2/functional_data2.dart';
 
 part 'lens.g.dart';
 

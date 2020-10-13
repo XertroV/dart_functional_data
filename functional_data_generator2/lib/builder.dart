@@ -3,7 +3,7 @@ import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:collection/collection.dart';
 import 'package:source_gen/source_gen.dart';
-import 'package:functional_data/functional_data.dart';
+import 'package:functional_data2/functional_data2.dart';
 
 Builder functionalData(BuilderOptions options) =>
     new SharedPartBuilder([new FunctionalDataGenerator()], 'functional_data');

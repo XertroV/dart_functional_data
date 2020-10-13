@@ -1,3 +1,7 @@
+## 0.3.2
+
+- Migrate plain_optional -> dartz to keep types consistent
+
 ## 0.3.1
 
 - Add Lenses for Map and BuiltMap

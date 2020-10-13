@@ -1,5 +1,5 @@
 name: functional_data2
-version: 0.3.1
+version: 0.3.2
 description: >-
   Annotations and helpers for lenses for code generated with the `function_data_generator` package.
 homepage: https://github.com/xertrov/dart_functional_data2

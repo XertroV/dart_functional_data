@@ -1,7 +1,7 @@
 ## 0.3.4
 
 - remove upper restriction on `analyzer` dependency
--
+- rename to functional_data_generator2
 
 ## 0.3.3
 

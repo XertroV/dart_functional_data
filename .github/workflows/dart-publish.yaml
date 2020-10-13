@@ -14,3 +14,4 @@ jobs:
           dryRunOnly: true
           accessToken: ${{ secrets.PUB_LISH_OAUTH_ACCESS_TOKEN }}
           refreshToken: ${{ secrets.PUB_LISH_OAUTH_REFRESH_TOKEN }}
+          relativePath: function_data_generator2

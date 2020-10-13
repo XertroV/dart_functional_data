@@ -1,0 +1,16 @@
+name: Dart Publish
+
+on: [push, pull_request]
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: '>> Dart package <<'
+        uses: k-paxian/dart-package-publisher@master
+        with:
+          dryRunOnly: true
+          accessToken: ${{ secrets.PUB_LISH_OAUTH_ACCESS_TOKEN }}
+          refreshToken: ${{ secrets.PUB_LISH_OAUTH_REFRESH_TOKEN }}

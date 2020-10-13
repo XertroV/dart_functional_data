@@ -33,7 +33,10 @@ String _getCustomEquality(List<ElementAnnotation> annotations) {
       orElse: () => null);
   if (annotation != null) {
     final source = annotation.toSource();
-    return 'const ' + source.substring("@CustomEquality(".length, source.length - 1).replaceAll('?', '');
+    return 'const ' +
+        source
+            .substring("@CustomEquality(".length, source.length - 1)
+            .replaceAll('?', '');
   } else
     return null;
 }
@@ -45,16 +48,17 @@ String _generateDataType(Element element) {
 
   final prefixes = Map.fromEntries(element.library.imports
       .where((import) => import.prefix != null)
-      .map(
-          (import) => MapEntry(import.importedLibrary.toString(), import.prefix.name)));
+      .map((import) =>
+          MapEntry(import.importedLibrary.toString(), import.prefix.name)));
 
   final className = element.name.replaceAll('\$', '');
 
   final classElement = element as ClassElement;
 
-  final fields = classElement.fields.where((f) => !f.isSynthetic && !f.isStatic).map((f) {
-    return Field(f.name, prefixes[f.type.element?.library?.toString()], _typeAsCode(f.type),
-          _getCustomEquality(f.metadata));
+  final fields =
+      classElement.fields.where((f) => !f.isSynthetic && !f.isStatic).map((f) {
+    return Field(f.name, prefixes[f.type.element?.library?.toString()],
+        _typeAsCode(f.type), _getCustomEquality(f.metadata));
   });
 
   final fieldDeclarations = fields.map((f) => '${f.type} get ${f.name};');
@@ -94,14 +98,21 @@ String _generateDataType(Element element) {
 
 String _typeAsCode(DartType type) {
   if (type is FunctionType) {
-    final positionArgs = type.parameters.where((p) => p.isPositional).map((p) => _typeAsCode(p.type)).join(', ');
-    final namedArgs = type.parameters.where((p) => p.isNamed).map((p) => '${_typeAsCode(p.type)} ${p.name}').join(', ');
+    final positionArgs = type.parameters
+        .where((p) => p.isPositional)
+        .map((p) => _typeAsCode(p.type))
+        .join(', ');
+    final namedArgs = type.parameters
+        .where((p) => p.isNamed)
+        .map((p) => '${_typeAsCode(p.type)} ${p.name}')
+        .join(', ');
 
-    final parameters = namedArgs.isEmpty ? positionArgs : positionArgs + ', {$namedArgs}';
+    final parameters =
+        namedArgs.isEmpty ? positionArgs : positionArgs + ', {$namedArgs}';
 
     return '${_typeAsCode(type.returnType)} Function($parameters)';
   } else {
-    return type.displayName;
+    return type.getDisplayString(withNullability: false);
   }
 }
 

@@ -1,3 +1,8 @@
+## 0.3.4
+
+- remove upper restriction on `analyzer` dependency
+-
+
 ## 0.3.3
 
 - Fix bug where question mark would appear in generated code when using certain values

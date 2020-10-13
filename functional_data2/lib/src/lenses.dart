@@ -1,12 +1,14 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:meta/meta.dart';
-import 'package:plain_optional/plain_optional.dart';
+import 'package:dartz/dartz.dart';
 
 /// Get the value of a field of type [T] of [subject]
 typedef Getter<S, T> = T Function(S subject);
 
 /// Returns a copy of [subject] but with a field of type [T] replaced by [value]
 typedef Updater<S, T> = S Function(S subject, T value);
+
+Option<T> toOption<T>(T val) => val == null ? None() : Some(val);
 
 @immutable
 class Lens<S, T> {
@@ -91,117 +93,107 @@ class FocusedLens<S, T> {
   S map(T Function(T) f) => update(f(value));
 }
 
+S Function(S s, Option<T> t) wrapOption<S, T>(S Function(S s, T t) f) =>
+    (S s, Option<T> ot) => ot.map((tVal) => f(s, tVal)).getOrElse(() => s);
+
 class List$ {
   List$._();
 
-  static Lens<List<T>, T> atIndex<T>(int i) => Lens<List<T>, T>(
-        (s) => s[i],
-        (s, t) {
+  static Lens<List<T>, Option<T>> atIndex<T>(int i) => Lens<List<T>, Option<T>>(
+        (s) => i >= 0 && i < s.length ? Some(s[i]) : None(),
+        wrapOption((s, t) {
           assert(i >= 0 && i < s.length);
           final newS = List<T>.from(s);
           newS.replaceRange(i, i + 1, [t]);
           return newS;
-        },
+        }),
       );
 
-  static Lens<List<T>, T> first<T>() => atIndex(0);
+  static Lens<List<T>, Option<T>> first<T>() => atIndex(0);
 
-  static Lens<List<T>, T> where<T>(bool Function(T) predicate) =>
-      Lens<List<T>, T>(
-        (s) => s.firstWhere(predicate),
-        (s, t) {
+  static Lens<List<T>, Option<T>> where<T>(bool Function(T) predicate) =>
+      Lens<List<T>, Option<T>>(
+        (s) => toOption(s.firstWhere(predicate)),
+        wrapOption((s, t) {
           final index = s.indexWhere(predicate);
           final newS = List<T>.from(s);
           newS.replaceRange(index, index + 1, [t]);
           return newS;
-        },
+        }),
       );
 
-  static Lens<List<T>, Optional<T>> whereOptional<T>(
+  static Lens<List<T>, Option<T>> whereOptional<T>(
           bool Function(T) predicate) =>
-      Lens<List<T>, Optional<T>>(
-        (s) => Optional<T>(s.firstWhere(predicate, orElse: () => null)),
-        (s, t) {
-          if (!t.hasValue) return s;
+      Lens<List<T>, Option<T>>(
+        (s) => toOption(s.firstWhere(predicate, orElse: () => null)),
+        wrapOption((s, t) {
           final index = s.indexWhere(predicate);
           if (index < 0) return s;
           final newS = List<T>.from(s);
-          newS.replaceRange(index, index + 1, [t.unsafe]);
+          newS.replaceRange(index, index + 1, [t]);
           return newS;
-        },
+        }),
       );
 }
 
 class Map$ {
   Map$._();
 
-  static Lens<Map<S, T>, Optional<T>> atKey<S, T>(S i) =>
-      Lens<Map<S, T>, Optional<T>>(
-        (s) => s.containsKey(i) ? Optional(s[i]) : Optional.none(),
-        (s, t) => t
-            .map((tVal) => Map.from(s)..addEntries([MapEntry(i, tVal)]))
-            .valueOr(() => s),
+  static Lens<Map<S, T>, Option<T>> atKey<S, T>(S i) =>
+      Lens<Map<S, T>, Option<T>>(
+        (s) => s.containsKey(i) ? Some(s[i]) : None(),
+        wrapOption((s, t) => Map.from(s)..addEntries([MapEntry(i, t)])),
       );
 
-  static Lens<Map<S, T>, MapEntry<S, T>> where<S, T>(
+  static Lens<Map<S, T>, Option<MapEntry<S, T>>> where<S, T>(
           bool Function(MapEntry<S, T>) predicate) =>
-      Lens<Map<S, T>, MapEntry<S, T>>(
-        (s) => s.entries.firstWhere(predicate),
-        (s, t) {
+      Lens<Map<S, T>, Option<MapEntry<S, T>>>(
+        (s) => toOption(s.entries.firstWhere(predicate)),
+        wrapOption((s, t) {
           var entriesList = s.entries.toList();
           final index = entriesList.indexWhere(predicate);
           final newS = List<MapEntry<S, T>>.from(entriesList);
           if (predicate(entriesList[index]))
-            newS.replaceRange(index, index + 1, []);
+            newS.replaceRange(index, index + 1, [t]);
           return Map.fromEntries(newS);
-        },
+        }),
       );
 
-  static Lens<Map<S, T>, Optional<MapEntry<S, T>>> whereOptional<S, T>(
+  static Lens<Map<S, T>, Option<MapEntry<S, T>>> whereOptional<S, T>(
           bool Function(MapEntry<S, T>) predicate) =>
-      Lens<Map<S, T>, Optional<MapEntry<S, T>>>(
-        (s) => Optional((s.entries).firstWhere(predicate, orElse: () => null)),
-        (s, t) {
-          if (!t.hasValue) return s;
+      Lens<Map<S, T>, Option<MapEntry<S, T>>>(
+        (s) => toOption((s.entries).firstWhere(predicate, orElse: () => null)),
+        wrapOption((s, t) {
           final index = s.entries.toList().indexWhere(predicate);
           if (index < 0) return s;
           final newS = Map<S, T>.from(s);
-          newS.entries.toList().replaceRange(index, index + 1, [t.unsafe]);
+          newS.entries.toList().replaceRange(index, index + 1, [t]);
           return newS;
-        },
+        }),
       );
 }
 
 class BuiltMap$ {
   BuiltMap$._();
 
-  static Lens<BuiltMap<S, T>, Optional<T>> atKey<S, T>(S i) =>
-      Lens<BuiltMap<S, T>, Optional<T>>(
-        (s) => s.containsKey(i) ? Optional(s[i]) : Optional.none(),
-        (s, t) {
-          return t
-              .map((tVal) =>
-                  (s.toBuilder()..addEntries([MapEntry(i, tVal)])).build())
-              .valueOr(() => s);
-        },
+  static Lens<BuiltMap<S, T>, Option<T>> atKey<S, T>(S i) =>
+      Lens<BuiltMap<S, T>, Option<T>>(
+        (s) => s.containsKey(i) ? Some(s[i]) : None(),
+        wrapOption(
+            (s, t) => (s.toBuilder()..addEntries([MapEntry(i, t)])).build()),
       );
 
-  static Lens<BuiltMap<S, T>, MapEntry<S, T>> where<S, T>(
+  static Lens<BuiltMap<S, T>, Option<MapEntry<S, T>>> where<S, T>(
           bool Function(MapEntry<S, T>) predicate) =>
-      Lens<BuiltMap<S, T>, MapEntry<S, T>>(
-        (s) => s.entries.firstWhere(predicate),
-        (s, t) {
+      Lens<BuiltMap<S, T>, Option<MapEntry<S, T>>>(
+        (s) => toOption(s.entries.firstWhere(predicate)),
+        wrapOption((s, t) {
           var entriesList = s.entries.toList();
           final index = entriesList.indexWhere(predicate);
           final newS = List<MapEntry<S, T>>.from(entriesList);
           if (predicate(entriesList[index]))
-            newS.replaceRange(index, index + 1, []);
+            newS.replaceRange(index, index + 1, [t]);
           return BuiltMap.from(Map.fromEntries(newS));
-        },
+        }),
       );
-}
-
-extension DeprecatedOptional<T> on Optional<T> {
-  @Deprecated("Use `unsafe` instead")
-  T get raw => unsafe;
 }

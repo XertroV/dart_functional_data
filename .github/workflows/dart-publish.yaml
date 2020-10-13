@@ -10,16 +10,16 @@ jobs:
         uses: actions/checkout@v2
 
       - name: '>> Dart package functional_data2 <<'
-        uses: k-paxian/dart-package-publisher@master
+        uses: k-paxian/dart-package-publisher@v1.2
         with:
-          dryRunOnly: true
+          dryRunOnly: false
           accessToken: ${{ secrets.PUB_LISH_OAUTH_ACCESS_TOKEN }}
           refreshToken: ${{ secrets.PUB_LISH_OAUTH_REFRESH_TOKEN }}
           relativePath: functional_data2
           skipTests: true
 
       - name: '>> Dart package functional_data_generator2 <<'
-        uses: k-paxian/dart-package-publisher@master
+        uses: k-paxian/dart-package-publisher@v1.2
         with:
           dryRunOnly: true
           accessToken: ${{ secrets.PUB_LISH_OAUTH_ACCESS_TOKEN }}

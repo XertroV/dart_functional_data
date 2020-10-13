@@ -3,6 +3,8 @@
 Simple and non-intrusive code generator for boilerplate of data types. The package generates a simple mixin with
 `operator==`, `hashCode`, `copyWith`, `toString`, as well as lenses.
 
+This is a fork of @spkersten/dart_functional_data.
+
 ## Boiler plate
 
 Because the boiler plate is generated as a mixin, it is minimally intrusive on the interface of the class. You

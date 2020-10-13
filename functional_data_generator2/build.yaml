@@ -1,13 +1,13 @@
 targets:
   $default:
     builders:
-      functional_data_generator|functional_data_generator:
+      functional_data_generator2|functional_data_generator2:
         enabled: true
 
 builders:
   functional_data:
-    target: ":functional_data_generator"
-    import: "package:functional_data_generator/builder.dart"
+    target: ":functional_data_generator2"
+    import: "package:functional_data_generator2/builder.dart"
     builder_factories: ["functionalData"]
     build_extensions: {".dart": [".functional_data.g.part"]}
     auto_apply: dependents

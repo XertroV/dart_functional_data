@@ -2,10 +2,7 @@ name: functional_data_generator2
 version: 0.3.4
 description: >-
   Simple and non-intrusive code generator for boilerplate of data types.
-authors:
-  - Sander Kersten <spkersten@gmail.com>
-  - Max Kaye <m@xk.io>
-homepage: https://github.com/xertrov/dart_functional_data
+homepage: https://github.com/xertrov/dart_functional_data2
 
 environment:
   sdk: ">=2.7.0 <3.0.0"

@@ -96,6 +96,13 @@ class FocusedLens<S, T> {
 S Function(S s, Option<T> t) wrapOption<S, T>(S Function(S s, T t) f) =>
     (S s, Option<T> ot) => ot.map((tVal) => f(s, tVal)).getOrElse(() => s);
 
+class Option$ {
+  Option$._();
+
+  static Lens<Option<T>, T> some<T>(T withDefault) => Lens<Option<T>, T>(
+      (o) => o.getOrElse(() => withDefault), (s, t) => s.map((_) => t));
+}
+
 class List$ {
   List$._();
 
